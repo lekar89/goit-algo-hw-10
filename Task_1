@@ -1,0 +1,25 @@
+from pulp import LpProblem, LpMaximize, LpVariable
+
+# Створюємо модель оптимізації
+model = LpProblem(name="Production_Optimization", sense=LpMaximize)
+
+# Оголошуємо змінні рішення - кількість одиниць "Лимонаду" та "Фруктового соку"
+x1 = LpVariable(name="Lemonade", lowBound=0, cat="Integer")
+x2 = LpVariable(name="FruitJuice", lowBound=0, cat="Integer")
+
+# Цільова функція для максимізації виробництва
+model += x1 + x2
+
+# Додаємо обмеження ресурсів
+model += 2 * x1 + x2 <= 100   # Вода
+model += x1 <= 50             # Цукор
+model += x1 <= 30             # Лимонний сік
+model += 2 * x2 + x1 <= 40    # Фруктове пюре
+
+# Розв'язуємо задачу
+model.solve()
+
+# Виводимо результати
+print(f"Optimal quantity of Lemonade: {int(x1.value())}")
+print(f"Optimal quantity of Fruit Juice: {int(x2.value())}")
+print(f"Maximum production: {int(model.objective.value())}")
